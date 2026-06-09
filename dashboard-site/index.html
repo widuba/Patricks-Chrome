@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Browser Activity Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --soft: #f3f4f6;
+      --border: #e5e7eb;
+      --accent: #111827;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --green-text: #166534;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --red-text: #991b1b;
+      --blue-bg: #eef2ff;
+      --blue-text: #1e3a8a;
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input {
+      font-family: inherit;
+    }
+
+    .app {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: 94px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #111827, #374151);
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.18);
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1;
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle,
+    .small,
+    .muted {
+      color: var(--muted);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .small {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+      margin-bottom: 14px;
+    }
+
+    .authCard {
+      max-width: 430px;
+      margin: 60px auto;
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      min-height: 112px;
+    }
+
+    .metricLabel {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .metricValue {
+      font-size: 30px;
+      font-weight: 850;
+      letter-spacing: -0.05em;
+    }
+
+    .metricSub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+      font-weight: 650;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 15px;
+      padding: 13px 13px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+      min-width: 0;
+    }
+
+    input:focus {
+      border-color: #9ca3af;
+    }
+
+    button {
+      border: 0;
+      border-radius: 15px;
+      padding: 13px 15px;
+      font-size: 15px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .plain {
+      background: var(--soft);
+      color: var(--text);
+    }
+
+    .danger {
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .green {
+      background: var(--green-bg);
+      color: var(--green-text);
+    }
+
+    .red {
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .blue {
+      background: var(--blue-bg);
+      color: var(--blue-text);
+    }
+
+    .full {
+      width: 100%;
+    }
+
+    .topActions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .topActions button {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(620px, calc(100% - 28px));
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.14);
+      backdrop-filter: blur(18px);
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .tab {
+      background: transparent;
+      color: var(--muted);
+      padding: 11px 8px;
+      border-radius: 17px;
+      font-size: 13px;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .itemTop {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .itemTitle {
+      font-weight: 850;
+      font-size: 15px;
+      word-break: break-word;
+    }
+
+    .itemMeta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    .pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 850;
+      background: var(--green-bg);
+      color: var(--green-text);
+      white-space: nowrap;
+    }
+
+    .siteBarWrap {
+      margin-top: 8px;
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      overflow: hidden;
+    }
+
+    .siteBar {
+      height: 100%;
+      border-radius: 999px;
+      background: #111827;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      background: #fff;
+      border: 1px dashed #d1d5db;
+      border-radius: 22px;
+    }
+
+    .dayButton {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 20px;
+    }
+
+    .dayButton .date {
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .dayButton .stats {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .switchRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .switchRow strong {
+      display: block;
+    }
+
+    .switchRow span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .switchBtn {
+      min-width: 92px;
+    }
+
+    .rulesGrid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .dayRule {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .dayRuleName {
+      font-weight: 850;
+      margin-bottom: 10px;
+      text-transform: capitalize;
+    }
+
+    .timeRow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .timeBox {
+      min-width: 0;
+    }
+
+    .daySaveBtn {
+      min-width: 92px;
+      margin-bottom: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .topActions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .metricValue {
+        font-size: 28px;
+      }
+
+      .timeRow {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .daySaveBtn {
+        width: 100%;
+        margin-bottom: 0;
+      }
+
+      .switchRow {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .switchBtn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="authView" class="authCard card">
+    <div class="brand" style="margin-bottom: 22px;">
+      <div class="logo"></div>
+      <div>
+        <h1>Browser Activity</h1>
+        <div class="subtitle">Track Chrome and Edge usage</div>
+      </div>
+    </div>
+
+    <label>Email</label>
+    <input id="authEmail" type="email" placeholder="you@example.com" />
+
+    <label>Password</label>
+    <input id="authPassword" type="password" placeholder="Password" />
+
+    <button id="signInBtn" class="primary full">Sign In</button>
+    <div style="height: 10px;"></div>
+    <button id="createAccountBtn" class="blue full">Create Account</button>
+
+    <div id="authMessage" class="message"></div>
+  </div>
+
+  <div id="appView" class="app hidden">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Browser Activity</h1>
+          <div class="subtitle">Each day runs from 5:00 AM to 4:59 AM</div>
+        </div>
+      </div>
+
+      <div class="topActions">
+        <button id="refreshBtn" class="plain">Refresh</button>
+        <button id="signOutBtn" class="danger">Sign Out</button>
+      </div>
+    </header>
+
+    <section id="todaySection" class="section active">
+      <div class="grid three">
+        <div class="metric">
+          <div class="metricLabel">Browser time today</div>
+          <div id="todayTime" class="metricValue">0m</div>
+          <div class="metricSub">5:00 AM - 4:59 AM</div>
+        </div>
+
+        <div class="metric">
+          <div class="metricLabel">First activity</div>
+          <div id="firstActivity" class="metricValue">—</div>
+          <div class="metricSub">Oldest activity today</div>
+        </div>
+
+        <div class="metric">
+          <div class="metricLabel">Latest activity</div>
+          <div id="latestActivity" class="metricValue">—</div>
+          <div class="metricSub">Newest activity today</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="itemTop">
+          <div>
+            <h2>Most used sites today</h2>
+            <div class="small">Grouped by domain</div>
+          </div>
+          <span id="todayUniqueSites" class="pill">0 sites</span>
+        </div>
+        <div style="height:14px;"></div>
+        <div id="topSitesList" class="list"></div>
+      </div>
+
+      <div class="card">
+        <h2>Today’s timeline</h2>
+        <div class="small" style="margin:6px 0 12px;">Newest visit at the top.</div>
+        <div id="todayTimeline" class="list"></div>
+      </div>
+    </section>
+
+    <section id="historySection" class="section">
+      <div class="card">
+        <h2>History</h2>
+        <div class="small" style="margin-top:6px;">Newest day at the top. Each day runs from 5:00 AM to 4:59 AM.</div>
+      </div>
+
+      <div id="historyList" class="list"></div>
+    </section>
+
+    <section id="daySection" class="section">
+      <div class="card">
+        <button id="backToHistoryBtn" class="plain">← Back to History</button>
+        <div style="height:14px;"></div>
+        <h2 id="selectedDayTitle">Day</h2>
+        <div id="selectedDayStats" class="small" style="margin-top:6px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Sites</h2>
+        <div class="small" style="margin:6px 0 12px;">Most used sites for this day.</div>
+        <div id="selectedDaySites" class="list"></div>
+      </div>
+
+      <div class="card">
+        <h2>Timeline</h2>
+        <div class="small" style="margin:6px 0 12px;">Newest visit at the top.</div>
+        <div id="selectedDayTimeline" class="list"></div>
+      </div>
+    </section>
+
+    <section id="rulesSection" class="section">
+      <div class="card">
+        <h2>Rules</h2>
+        <div class="small" style="margin:6px 0 14px;">
+          These save automatically when changed. The extension checks for updates about every 30 seconds.
+        </div>
+
+        <div class="switchRow">
+          <div>
+            <strong>Tracking</strong>
+            <span>Records Chrome/Edge activity.</span>
+          </div>
+          <button id="trackingToggleBtn" class="switchBtn green">On</button>
+        </div>
+
+        <div class="switchRow">
+          <div>
+            <strong>Restrictions</strong>
+            <span>Optional. Off means nothing is blocked.</span>
+          </div>
+          <button id="restrictionsToggleBtn" class="switchBtn red">Off</button>
+        </div>
+
+        <div class="switchRow">
+          <div>
+            <strong>Full URLs</strong>
+            <span>Off saves only the site origin.</span>
+          </div>
+          <button id="fullUrlsToggleBtn" class="switchBtn red">Off</button>
+        </div>
+
+        <div class="switchRow">
+          <div>
+            <strong>Page titles</strong>
+            <span>Optional extra detail.</span>
+          </div>
+          <button id="titlesToggleBtn" class="switchBtn red">Off</button>
+        </div>
+      </div>
+
+      <div id="allowedHoursCard" class="card hidden">
+        <h2>Allowed hours</h2>
+        <div class="small" style="margin:6px 0 14px;">
+          These only matter when Restrictions is On. Each day saves individually.
+        </div>
+
+        <div id="rulesGrid" class="rulesGrid"></div>
+      </div>
+    </section>
+
+    <section id="settingsSection" class="section">
+      <div class="card">
+        <h2>Account</h2>
+        <div style="height:12px;"></div>
+        <div class="item">
+          <div class="itemTitle" id="accountEmail">—</div>
+          <div class="itemMeta">Signed in account</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>How to use</h2>
+        <div class="small" style="margin-top:8px;">
+          Sign into the Chrome/Edge extension using this same account. Tracking can stay on while restrictions remain off.
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="today">Today</button>
+      <button class="tab" data-tab="history">History</button>
+      <button class="tab" data-tab="rules">Rules</button>
+      <button class="tab" data-tab="settings">Account</button>
+    </nav>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      collection,
+      query,
+      orderBy,
+      limit,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_WEB_API_KEY",
+      authDomain: "YOUR_FIREBASE_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_FIREBASE_PROJECT_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const FIVE_AM_SHIFT_MS = 5 * 60 * 60 * 1000;
+
+    const authView = document.getElementById("authView");
+    const appView = document.getElementById("appView");
+
+    const authEmail = document.getElementById("authEmail");
+    const authPassword = document.getElementById("authPassword");
+    const authMessage = document.getElementById("authMessage");
+
+    const signInBtn = document.getElementById("signInBtn");
+    const createAccountBtn = document.getElementById("createAccountBtn");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    const todayTime = document.getElementById("todayTime");
+    const firstActivity = document.getElementById("firstActivity");
+    const latestActivity = document.getElementById("latestActivity");
+    const todayUniqueSites = document.getElementById("todayUniqueSites");
+    const topSitesList = document.getElementById("topSitesList");
+    const todayTimeline = document.getElementById("todayTimeline");
+
+    const historyList = document.getElementById("historyList");
+    const backToHistoryBtn = document.getElementById("backToHistoryBtn");
+    const selectedDayTitle = document.getElementById("selectedDayTitle");
+    const selectedDayStats = document.getElementById("selectedDayStats");
+    const selectedDaySites = document.getElementById("selectedDaySites");
+    const selectedDayTimeline = document.getElementById("selectedDayTimeline");
+
+    const trackingToggleBtn = document.getElementById("trackingToggleBtn");
+    const restrictionsToggleBtn = document.getElementById("restrictionsToggleBtn");
+    const fullUrlsToggleBtn = document.getElementById("fullUrlsToggleBtn");
+    const titlesToggleBtn = document.getElementById("titlesToggleBtn");
+    const allowedHoursCard = document.getElementById("allowedHoursCard");
+    const rulesGrid = document.getElementById("rulesGrid");
+
+    const accountEmail = document.getElementById("accountEmail");
+
+    let currentUser = null;
+    let currentSettings = defaultSettings();
+    let recentSegments = [];
+
+    const dayNames = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday"
+    ];
+
+    signInBtn.addEventListener("click", async () => {
+      authMessage.textContent = "Signing in...";
+
+      try {
+        await signInWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value);
+        authMessage.textContent = "";
+      } catch (error) {
+        authMessage.textContent = cleanFirebaseError(error.message);
+      }
+    });
+
+    createAccountBtn.addEventListener("click", async () => {
+      authMessage.textContent = "Creating account...";
+
+      try {
+        await createUserWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value);
+        authMessage.textContent = "";
+      } catch (error) {
+        authMessage.textContent = cleanFirebaseError(error.message);
+      }
+    });
+
+    signOutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    refreshBtn.addEventListener("click", async () => {
+      await loadEverything();
+    });
+
+    backToHistoryBtn.addEventListener("click", () => {
+      showSection("history");
+    });
+
+    trackingToggleBtn.addEventListener("click", async () => {
+      currentSettings.trackingEnabled = !currentSettings.trackingEnabled;
+      renderRuleControls();
+      await saveSettings();
+    });
+
+    restrictionsToggleBtn.addEventListener("click", async () => {
+      currentSettings.restrictionsEnabled = !currentSettings.restrictionsEnabled;
+      renderRuleControls();
+      await saveSettings();
+    });
+
+    fullUrlsToggleBtn.addEventListener("click", async () => {
+      currentSettings.trackFullUrls = !currentSettings.trackFullUrls;
+      renderRuleControls();
+      await saveSettings();
+    });
+
+    titlesToggleBtn.addEventListener("click", async () => {
+      currentSettings.trackPageTitles = !currentSettings.trackPageTitles;
+      renderRuleControls();
+      await saveSettings();
+    });
+
+    document.querySelectorAll(".tab").forEach(button => {
+      button.addEventListener("click", () => {
+        showSection(button.dataset.tab);
+      });
+    });
+
+    onAuthStateChanged(auth, async user => {
+      currentUser = user;
+
+      if (!user) {
+        authView.classList.remove("hidden");
+        appView.classList.add("hidden");
+        return;
+      }
+
+      authView.classList.add("hidden");
+      appView.classList.remove("hidden");
+
+      accountEmail.textContent = user.email || "Account";
+
+      await loadEverything();
+    });
+
+    async function loadEverything() {
+      if (!currentUser) return;
+
+      currentSettings = await loadSettings();
+      renderRuleControls();
+
+      recentSegments = await loadRecentSegments();
+      renderToday();
+      renderHistory();
+    }
+
+    async function loadSettings() {
+      const ref = doc(db, "users", currentUser.uid, "settings", "browserRules");
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        const settings = defaultSettings();
+        await setDoc(ref, serializeSettings(settings), { merge: true });
+        return settings;
+      }
+
+      const data = snap.data();
+
+      return {
+        trackingEnabled: data.trackingEnabled !== false,
+        restrictionsEnabled: data.restrictionsEnabled === true,
+        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
+        trackFullUrls: data.trackFullUrls === true,
+        trackPageTitles: data.trackPageTitles === true,
+        allowedWindows: safeJson(data.allowedWindowsJson, defaultAllowedWindows())
+      };
+    }
+
+    async function saveSettings() {
+      if (!currentUser) return;
+
+      const ref = doc(db, "users", currentUser.uid, "settings", "browserRules");
+      await setDoc(ref, serializeSettings(currentSettings), { merge: true });
+    }
+
+    function serializeSettings(settings) {
+      return {
+        trackingEnabled: Boolean(settings.trackingEnabled),
+        restrictionsEnabled: Boolean(settings.restrictionsEnabled),
+        timezone: settings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
+        trackFullUrls: Boolean(settings.trackFullUrls),
+        trackPageTitles: Boolean(settings.trackPageTitles),
+        allowedWindowsJson: JSON.stringify(settings.allowedWindows || defaultAllowedWindows()),
+        updatedAtMs: Date.now()
+      };
+    }
+
+    async function loadRecentSegments() {
+      const ref = collection(db, "users", currentUser.uid, "siteSegments");
+      const q = query(ref, orderBy("startedAtMs", "desc"), limit(1200));
+      const snap = await getDocs(q);
+
+      return snap.docs
+        .map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }))
+        .filter(item => Number(item.startedAtMs) && Number(item.durationMs));
+    }
+
+    function renderToday() {
+      const dayKey = getDayKey(Date.now());
+      const segments = recentSegments
+        .filter(item => item.dayKey === dayKey);
+
+      renderOverviewMetrics(segments);
+      renderSites(topSitesList, segments);
+      renderTimeline(todayTimeline, segments);
+    }
+
+    function renderOverviewMetrics(segments) {
+      const sortedOldest = [...segments].sort((a, b) => Number(a.startedAtMs) - Number(b.startedAtMs));
+      const totalMs = segments.reduce((sum, item) => sum + Number(item.durationMs || 0), 0);
+      const sites = new Set(segments.map(item => item.host).filter(Boolean));
+
+      todayTime.textContent = formatDuration(totalMs);
+      todayUniqueSites.textContent = `${sites.size} ${sites.size === 1 ? "site" : "sites"}`;
+
+      if (!sortedOldest.length) {
+        firstActivity.textContent = "—";
+        latestActivity.textContent = "—";
+        return;
+      }
+
+      firstActivity.textContent = formatTime(sortedOldest[0].startedAtMs);
+      latestActivity.textContent = formatTime(sortedOldest[sortedOldest.length - 1].endedAtMs);
+    }
+
+    function renderHistory() {
+      const byDay = new Map();
+
+      for (const segment of recentSegments) {
+        if (!segment.dayKey) continue;
+
+        if (!byDay.has(segment.dayKey)) {
+          byDay.set(segment.dayKey, []);
+        }
+
+        byDay.get(segment.dayKey).push(segment);
+      }
+
+      const days = [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+
+      historyList.innerHTML = "";
+
+      if (!days.length) {
+        historyList.innerHTML = `<div class="empty">No activity yet. Sign into the extension and browse normally.</div>`;
+        return;
+      }
+
+      for (const [dayKey, segments] of days) {
+        const totalMs = segments.reduce((sum, item) => sum + Number(item.durationMs || 0), 0);
+        const sites = new Set(segments.map(item => item.host).filter(Boolean));
+
+        const button = document.createElement("button");
+        button.className = "dayButton";
+        button.innerHTML = `
+          <div class="date">${formatDayKey(dayKey)}</div>
+          <div class="stats">${formatDuration(totalMs)} • ${sites.size} sites • ${segments.length} segments</div>
+        `;
+
+        button.addEventListener("click", () => {
+          renderSelectedDay(dayKey, segments);
+        });
+
+        historyList.appendChild(button);
+      }
+    }
+
+    function renderSelectedDay(dayKey, segmentsInput) {
+      const segments = [...segmentsInput];
+      const totalMs = segments.reduce((sum, item) => sum + Number(item.durationMs || 0), 0);
+      const sites = new Set(segments.map(item => item.host).filter(Boolean));
+
+      selectedDayTitle.textContent = formatDayKey(dayKey);
+      selectedDayStats.textContent = `${formatDuration(totalMs)} • ${sites.size} sites • ${segments.length} activity segments`;
+
+      renderSites(selectedDaySites, segments);
+      renderTimeline(selectedDayTimeline, segments);
+
+      showSection("day");
+    }
+
+    function renderSites(container, segments) {
+      container.innerHTML = "";
+
+      if (!segments.length) {
+        container.innerHTML = `<div class="empty">No site activity for this period.</div>`;
+        return;
+      }
+
+      const totals = new Map();
+
+      for (const segment of segments) {
+        const host = segment.host || "Unknown";
+        const existing = totals.get(host) || {
+          host,
+          durationMs: 0,
+          visits: 0
+        };
+
+        existing.durationMs += Number(segment.durationMs || 0);
+        existing.visits += 1;
+
+        totals.set(host, existing);
+      }
+
+      const sorted = [...totals.values()].sort((a, b) => b.durationMs - a.durationMs);
+      const max = sorted[0]?.durationMs || 1;
+
+      for (const site of sorted.slice(0, 12)) {
+        const percent = Math.max(4, Math.round((site.durationMs / max) * 100));
+
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="itemTop">
+            <div>
+              <div class="itemTitle">${escapeHtml(site.host)}</div>
+              <div class="itemMeta">${site.visits} ${site.visits === 1 ? "segment" : "segments"}</div>
+            </div>
+            <span class="pill">${formatDuration(site.durationMs)}</span>
+          </div>
+          <div class="siteBarWrap">
+            <div class="siteBar" style="width:${percent}%"></div>
+          </div>
+        `;
+
+        container.appendChild(div);
+      }
+    }
+
+    function renderTimeline(container, segments) {
+      container.innerHTML = "";
+
+      if (!segments.length) {
+        container.innerHTML = `<div class="empty">No timeline activity yet.</div>`;
+        return;
+      }
+
+      const sortedNewest = [...segments].sort((a, b) => Number(b.startedAtMs) - Number(a.startedAtMs));
+
+      for (const segment of sortedNewest) {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        const title = segment.title ? `<div class="itemMeta">${escapeHtml(segment.title)}</div>` : "";
+        const url = segment.url ? `<div class="itemMeta">${escapeHtml(segment.url)}</div>` : "";
+
+        div.innerHTML = `
+          <div class="itemTop">
+            <div>
+              <div class="itemTitle">${escapeHtml(segment.host || "Unknown")}</div>
+              <div class="itemMeta">${formatTime(segment.startedAtMs)} - ${formatTime(segment.endedAtMs)} • ${escapeHtml(segment.browser || "Browser")}</div>
+              ${title}
+              ${url}
+            </div>
+            <span class="pill">${formatDuration(segment.durationMs)}</span>
+          </div>
+        `;
+
+        container.appendChild(div);
+      }
+    }
+
+    function renderRuleControls() {
+      setToggleButton(trackingToggleBtn, currentSettings.trackingEnabled);
+      setToggleButton(restrictionsToggleBtn, currentSettings.restrictionsEnabled);
+      setToggleButton(fullUrlsToggleBtn, currentSettings.trackFullUrls);
+      setToggleButton(titlesToggleBtn, currentSettings.trackPageTitles);
+
+      allowedHoursCard.classList.toggle("hidden", !currentSettings.restrictionsEnabled);
+
+      rulesGrid.innerHTML = "";
+
+      const windows = currentSettings.allowedWindows || defaultAllowedWindows();
+
+      for (const day of dayNames) {
+        const rule = windows[day]?.[0] || {
+          start: "05:00",
+          end: "01:00"
+        };
+
+        const div = document.createElement("div");
+        div.className = "dayRule";
+        div.innerHTML = `
+          <div class="dayRuleName">${day}</div>
+          <div class="timeRow">
+            <div class="timeBox">
+              <label>Start</label>
+              <input id="${day}-start" type="time" value="${rule.start}" />
+            </div>
+            <div class="timeBox">
+              <label>End</label>
+              <input id="${day}-end" type="time" value="${rule.end}" />
+            </div>
+            <button id="${day}-save" class="daySaveBtn green">Saved</button>
+          </div>
+        `;
+
+        rulesGrid.appendChild(div);
+
+        const startInput = div.querySelector(`#${day}-start`);
+        const endInput = div.querySelector(`#${day}-end`);
+        const saveBtn = div.querySelector(`#${day}-save`);
+
+        function updateSaveButton() {
+          const saved = currentSettings.allowedWindows?.[day]?.[0] || rule;
+          const matchesSaved = startInput.value === saved.start && endInput.value === saved.end;
+
+          saveBtn.textContent = matchesSaved ? "Saved" : "Save";
+          saveBtn.className = matchesSaved ? "daySaveBtn green" : "daySaveBtn blue";
+        }
+
+        startInput.addEventListener("input", updateSaveButton);
+        endInput.addEventListener("input", updateSaveButton);
+
+        saveBtn.addEventListener("click", async () => {
+          currentSettings.allowedWindows = currentSettings.allowedWindows || defaultAllowedWindows();
+          currentSettings.allowedWindows[day] = [
+            {
+              start: startInput.value,
+              end: endInput.value
+            }
+          ];
+
+          saveBtn.textContent = "Saving...";
+          saveBtn.className = "daySaveBtn blue";
+
+          await saveSettings();
+
+          saveBtn.textContent = "Saved";
+          saveBtn.className = "daySaveBtn green";
+        });
+      }
+    }
+
+    function setToggleButton(button, enabled) {
+      button.textContent = enabled ? "On" : "Off";
+      button.className = enabled ? "switchBtn green" : "switchBtn red";
+    }
+
+    function showSection(name) {
+      document.querySelectorAll(".section").forEach(section => {
+        section.classList.remove("active");
+      });
+
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tab === name);
+      });
+
+      if (name === "today") {
+        document.getElementById("todaySection").classList.add("active");
+      } else if (name === "history") {
+        document.getElementById("historySection").classList.add("active");
+      } else if (name === "rules") {
+        document.getElementById("rulesSection").classList.add("active");
+      } else if (name === "settings") {
+        document.getElementById("settingsSection").classList.add("active");
+      } else if (name === "day") {
+        document.getElementById("daySection").classList.add("active");
+      }
+    }
+
+    function defaultSettings() {
+      return {
+        trackingEnabled: true,
+        restrictionsEnabled: false,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
+        trackFullUrls: false,
+        trackPageTitles: false,
+        allowedWindows: defaultAllowedWindows()
+      };
+    }
+
+    function defaultAllowedWindows() {
+      return {
+        sunday: [{ start: "05:00", end: "01:00" }],
+        monday: [{ start: "05:00", end: "01:00" }],
+        tuesday: [{ start: "05:00", end: "01:00" }],
+        wednesday: [{ start: "05:00", end: "01:00" }],
+        thursday: [{ start: "05:00", end: "01:00" }],
+        friday: [{ start: "05:00", end: "01:00" }],
+        saturday: [{ start: "05:00", end: "01:00" }]
+      };
+    }
+
+    function getDayKey(timestampMs) {
+      const shifted = new Date(Number(timestampMs) - FIVE_AM_SHIFT_MS);
+
+      const year = shifted.getFullYear();
+      const month = String(shifted.getMonth() + 1).padStart(2, "0");
+      const day = String(shifted.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatDuration(ms) {
+      const totalMinutes = Math.round(Number(ms || 0) / 60000);
+
+      if (totalMinutes < 60) {
+        return `${totalMinutes}m`;
+      }
+
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      if (minutes === 0) {
+        return `${hours}h`;
+      }
+
+      return `${hours}h ${minutes}m`;
+    }
+
+    function formatTime(ms) {
+      if (!ms) return "—";
+
+      return new Date(Number(ms)).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function formatDayKey(dayKey) {
+      const [year, month, day] = dayKey.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+
+      return date.toLocaleDateString([], {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+    }
+
+    function safeJson(text, fallback) {
+      try {
+        if (!text) return fallback;
+        return JSON.parse(text);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function cleanFirebaseError(message) {
+      return String(message || "")
+        .replace("Firebase: ", "")
+        .replace(/\(auth\/.*?\)\.?/g, "")
+        .trim() || "Something went wrong.";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>
