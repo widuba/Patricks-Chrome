@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Security rules for the patricks-chrome Firestore database.
+//
+// The extension and the dashboard both write to and read from a single
+// per-user subtree: /users/{uid}/... . These rules make that subtree the
+// only thing a signed-in user can touch, and only their own. Without them,
+// the default locked/open rules either block the app entirely or expose
+// every user's browsing history to everyone.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // A user may read and write anything under their own /users/{uid} tree:
+    //   settings/browserRules   – tracking + restriction settings
+    //   siteSegments/{id}        – individual per-site activity segments
+    //   sessions/{id}            – rolled-up browsing sessions
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+
+    // Everything else is denied by default.
+  }
+}
