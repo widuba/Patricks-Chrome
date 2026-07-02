@@ -1,0 +1,19 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+*.log
+
+# Node (only used for tooling)
+node_modules/
+
+# Packaged extension builds
+*.zip
+dist/

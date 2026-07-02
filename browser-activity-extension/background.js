@@ -191,7 +191,6 @@ async function ensureDefaultSettings() {
   const stored = await chrome.storage.local.get([
     "trackingEnabled",
     "restrictionsEnabled",
-    "timezone",
     "trackFullUrls",
     "trackPageTitles",
     "allowedWindows"
@@ -201,7 +200,6 @@ async function ensureDefaultSettings() {
 
   if (stored.trackingEnabled === undefined) updates.trackingEnabled = true;
   if (stored.restrictionsEnabled === undefined) updates.restrictionsEnabled = false;
-  if (!stored.timezone) updates.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York";
   if (stored.trackFullUrls === undefined) updates.trackFullUrls = false;
   if (stored.trackPageTitles === undefined) updates.trackPageTitles = false;
   if (!stored.allowedWindows) updates.allowedWindows = defaultAllowedWindows();
@@ -239,9 +237,6 @@ async function pushLocalSettingsToFirestore() {
       restrictionsEnabled: {
         booleanValue: settings.restrictionsEnabled
       },
-      timezone: {
-        stringValue: settings.timezone
-      },
       trackFullUrls: {
         booleanValue: settings.trackFullUrls
       },
@@ -264,7 +259,6 @@ async function getLocalSettings() {
   const stored = await chrome.storage.local.get([
     "trackingEnabled",
     "restrictionsEnabled",
-    "timezone",
     "trackFullUrls",
     "trackPageTitles",
     "allowedWindows"
@@ -273,7 +267,6 @@ async function getLocalSettings() {
   return {
     trackingEnabled: stored.trackingEnabled !== false,
     restrictionsEnabled: stored.restrictionsEnabled === true,
-    timezone: stored.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
     trackFullUrls: stored.trackFullUrls === true,
     trackPageTitles: stored.trackPageTitles === true,
     allowedWindows: stored.allowedWindows || defaultAllowedWindows()
@@ -661,7 +654,6 @@ async function fetchRemoteRules(auth) {
   return {
     trackingEnabled: fields.trackingEnabled?.booleanValue !== false,
     restrictionsEnabled: fields.restrictionsEnabled?.booleanValue === true,
-    timezone: fields.timezone?.stringValue || "America/New_York",
     trackFullUrls: fields.trackFullUrls?.booleanValue === true,
     trackPageTitles: fields.trackPageTitles?.booleanValue === true,
     allowedWindows: safeParseJson(fields.allowedWindowsJson?.stringValue, defaultAllowedWindows())

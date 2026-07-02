@@ -5,7 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
 <link rel="shortcut icon" href="/assets/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="DataTracker " />
+<meta name="apple-mobile-web-app-title" content="Browser Activity" />
 <link rel="manifest" href="/assets/site.webmanifest" />
   <meta charset="UTF-8" />
   <title>Browser Activity Dashboard</title>
@@ -1023,7 +1023,6 @@
       return {
         trackingEnabled: data.trackingEnabled !== false,
         restrictionsEnabled: data.restrictionsEnabled === true,
-        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
         trackFullUrls: data.trackFullUrls === true,
         trackPageTitles: data.trackPageTitles === true,
         allowedWindows: normalizeAllowedWindows(
@@ -1043,7 +1042,6 @@
       return {
         trackingEnabled: Boolean(settings.trackingEnabled),
         restrictionsEnabled: Boolean(settings.restrictionsEnabled),
-        timezone: settings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
         trackFullUrls: Boolean(settings.trackFullUrls),
         trackPageTitles: Boolean(settings.trackPageTitles),
         allowedWindowsJson: JSON.stringify(
@@ -1353,7 +1351,6 @@
       return {
         trackingEnabled: true,
         restrictionsEnabled: false,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
         trackFullUrls: false,
         trackPageTitles: false,
         allowedWindows: defaultAllowedWindows()
